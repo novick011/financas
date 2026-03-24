@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User specific settings and profile information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "currency": { "type": "string", "enum": ["BRL", "USD", "EUR"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Transaction": {
+      "title": "Financial Transaction",
+      "description": "Income or expense record",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Owner ID" },
+        "amount": { "type": "number", "description": "Gross amount" },
+        "deduction": { "type": "number", "description": "Legacy deduction field" },
+        "adjustments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "description": { "type": "string" },
+              "amount": { "type": "number" },
+              "type": { "type": "string", "enum": ["discount", "addition"] }
+            }
+          }
+        },
+        "type": { "type": "string", "enum": ["income", "expense"] },
+        "category": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "description": { "type": "string" },
+        "paymentMethod": { "type": "string", "enum": ["cash_paid", "cash_pending", "installments"] },
+        "installmentsCount": { "type": "integer" },
+        "installmentNumber": { "type": "integer" },
+        "status": { "type": "string", "enum": ["paid", "pending"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "amount", "deduction", "type", "category", "date", "paymentMethod", "status"]
+    },
+    "Category": {
+      "title": "Transaction Category",
+      "description": "Custom categories for organizing transactions",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string" },
+        "icon": { "type": "string" },
+        "color": { "type": "string" },
+        "type": { "type": "string", "enum": ["income", "expense"] }
+      },
+      "required": ["uid", "name", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile documents"
+    },
+    "/transactions/{transactionId}": {
+      "schema": "Transaction",
+      "description": "Financial transaction records"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "User defined categories"
+    }
+  }
+}

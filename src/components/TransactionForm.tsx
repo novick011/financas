@@ -432,21 +432,21 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
                   </div>
 
                   {/* Adjustments Section */}
-                  <div className="space-y-3 pt-4 border-t border-gray-100">
+                  <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-white/5">
                     <div className="flex items-center justify-between">
                       <h5 className="text-[10px] font-bold uppercase text-gray-500">Ajustes Financeiros (Descontos e Adicionais)</h5>
                       <div className="flex gap-2">
                         <button
                           type="button"
                           onClick={() => addAdjustment('discount')}
-                          className="flex items-center gap-1 px-2 py-1 bg-rose-50 text-rose-600 rounded text-[9px] font-bold uppercase hover:bg-rose-100 transition-colors"
+                          className="flex items-center gap-1 px-2 py-1 bg-rose-50 dark:bg-rose-950/20 text-rose-600 dark:text-rose-450 rounded text-[9px] font-bold uppercase hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors"
                         >
                           <Plus className="w-3 h-3" /> Desconto
                         </button>
                         <button
                           type="button"
                           onClick={() => addAdjustment('addition')}
-                          className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-600 rounded text-[9px] font-bold uppercase hover:bg-emerald-100 transition-colors"
+                          className="flex items-center gap-1 px-2 py-1 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-450 rounded text-[9px] font-bold uppercase hover:bg-emerald-100 dark:hover:bg-emerald-900/40 transition-colors"
                         >
                           <Plus className="w-3 h-3" /> Adicional
                         </button>
@@ -466,7 +466,7 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
                               className="px-2 py-1 bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded text-[11px] focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
                             />
                             <div className="flex items-center gap-2">
-                              <span className={`text-[10px] font-bold ${adj.type === 'discount' ? 'text-rose-600' : 'text-emerald-600'}`}>
+                              <span className={`text-[10px] font-bold ${adj.type === 'discount' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                 {adj.type === 'discount' ? '-' : '+'} R$
                               </span>
                               <input
@@ -494,9 +494,9 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
                     </div>
 
                     {adjustments.length > 0 && (
-                      <div className="flex justify-end gap-4 text-[10px] font-mono border-t border-gray-100 pt-2">
-                        <span className="text-rose-600">Total Descontos: -R$ {totalDiscounts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
-                        <span className="text-emerald-600">Total Adicionais: +R$ {totalAdditions.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                      <div className="flex justify-end gap-4 text-[10px] font-mono border-t border-gray-100 dark:border-white/5 pt-2">
+                        <span className="text-rose-600 dark:text-rose-400">Total Descontos: -R$ {totalDiscounts.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                        <span className="text-emerald-600 dark:text-emerald-400">Total Adicionais: +R$ {totalAdditions.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                       </div>
                     )}
                   </div>

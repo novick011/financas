@@ -4,5 +4,16 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", serif;
+
+  --color-discord-deep: #1e1f22;
+  --color-discord-sidebar: #2b2d31;
+  --color-discord-main: #313338;
+  --color-discord-card: #2b2d31;
+  --color-discord-item: #383a40;
+  --color-discord-hover: #35373c;
+  --color-discord-input: #1e1f22;
+  --color-discord-blurple: #5865f2;
+  --color-discord-text-normal: #dbdee1;
+  --color-discord-text-muted: #949ba4;
 }
 

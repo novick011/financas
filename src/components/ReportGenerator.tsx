@@ -160,31 +160,31 @@ export default function ReportGenerator({ transactions }: ReportGeneratorProps) 
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div className={`p-6 sm:p-8 rounded-[32px] shadow-sm border text-center transition-colors ${isDarkMode ? 'bg-[#111] border-white/5' : 'bg-white border-gray-100'}`}>
-        <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-[#1a1a1a]/5'}`}>
-          <FileText className={`w-8 h-8 sm:w-10 sm:h-10 ${isDarkMode ? 'text-white' : 'text-[#1a1a1a]'}`} />
+      <div className="p-6 sm:p-8 rounded-[24px] shadow-2xl border border-white/5 bg-discord-card text-center text-discord-text-normal">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 bg-discord-blurple/10 text-discord-blurple shadow-md">
+          <FileText className="w-8 h-8 sm:w-10 sm:h-10 text-discord-blurple" />
         </div>
-        <h2 className={`text-xl sm:text-2xl font-serif font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Relatórios Contábeis</h2>
-        <p className="text-sm text-gray-500 mb-8">Gere o demonstrativo mensal de lançamentos e fluxo de caixa.</p>
+        <h2 className="text-xl sm:text-2xl font-bold mb-2 text-white">Relatórios Contábeis</h2>
+        <p className="text-sm text-discord-text-muted mb-8">Gere o demonstrativo mensal de lançamentos e fluxo de caixa contábil.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8">
           {months.map(month => (
             <button
               key={month.toISOString()}
               onClick={() => setSelectedMonth(month)}
-              className={`flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${
+              className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
                 isSameMonth(selectedMonth, month)
-                  ? isDarkMode ? 'border-white bg-white/10' : 'border-[#1a1a1a] bg-[#1a1a1a]/5'
-                  : isDarkMode ? 'border-white/5 hover:border-white/20' : 'border-gray-100 hover:border-gray-200'
+                  ? 'border-discord-blurple bg-discord-blurple/10 text-white'
+                  : 'border-white/5 bg-discord-deep hover:border-white/20 hover:bg-discord-hover text-discord-text-muted'
               }`}
             >
               <div className="flex items-center gap-3">
-                <Calendar className={`w-5 h-5 ${isSameMonth(selectedMonth, month) ? isDarkMode ? 'text-white' : 'text-[#1a1a1a]' : 'text-gray-400'}`} />
-                <span className={`text-sm font-medium ${isSameMonth(selectedMonth, month) ? isDarkMode ? 'text-white' : 'text-[#1a1a1a]' : 'text-gray-600'}`}>
+                <Calendar className={`w-5 h-5 ${isSameMonth(selectedMonth, month) ? 'text-discord-blurple' : 'text-discord-text-muted'}`} />
+                <span className={`text-sm font-medium ${isSameMonth(selectedMonth, month) ? 'text-white font-bold' : 'text-discord-text-normal'}`}>
                   {format(month, 'MMMM yyyy', { locale: ptBR })}
                 </span>
               </div>
-              {isSameMonth(selectedMonth, month) && <CheckCircle2 className={`w-5 h-5 ${isDarkMode ? 'text-white' : 'text-[#1a1a1a]'}`} />}
+              {isSameMonth(selectedMonth, month) && <CheckCircle2 className="w-5 h-5 text-discord-blurple" />}
             </button>
           ))}
         </div>
@@ -192,12 +192,10 @@ export default function ReportGenerator({ transactions }: ReportGeneratorProps) 
         <button
           onClick={generatePDF}
           disabled={isGenerating}
-          className={`w-full flex items-center justify-center gap-3 py-4 px-6 rounded-full font-bold shadow-lg transition-all disabled:opacity-50 ${
-            isDarkMode ? 'bg-white text-black hover:bg-gray-200 shadow-white/5' : 'bg-[#1a1a1a] text-white hover:bg-black shadow-black/20'
-          }`}
+          className="w-full flex items-center justify-center gap-3 py-3.5 px-6 bg-discord-blurple hover:bg-discord-blurple/90 text-white rounded-xl font-bold shadow-xl shadow-discord-blurple/20 transition-all disabled:opacity-50 hover:scale-[1.01] active:scale-[0.99]"
         >
           {isGenerating ? (
-            <div className={`w-5 h-5 border-2 rounded-full animate-spin ${isDarkMode ? 'border-black/30 border-t-black' : 'border-white/30 border-t-white'}`} />
+            <div className="w-5 h-5 border-2 rounded-full animate-spin border-white/30 border-t-white" />
           ) : (
             <>
               <Download className="w-5 h-5" />
@@ -207,20 +205,18 @@ export default function ReportGenerator({ transactions }: ReportGeneratorProps) 
         </button>
       </div>
 
-      <div className={`p-6 rounded-[32px] border border-dashed transition-colors ${isDarkMode ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+      <div className="p-6 rounded-[24px] border border-white/5 bg-discord-sidebar/60 transition-colors">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <h3 className={`font-bold flex items-center justify-center sm:justify-start gap-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-              <Database className="w-4 h-4" />
+            <h3 className="font-bold flex items-center justify-center sm:justify-start gap-2 text-white">
+              <Database className="w-4 h-4 text-discord-blurple" />
               Backup de Segurança
             </h3>
-            <p className="text-xs text-gray-500">Exporte todos os seus dados em formato JSON para backup offline.</p>
+            <p className="text-xs text-discord-text-muted mt-1">Exporte todos os seus dados em formato JSON para cópia offline segura.</p>
           </div>
           <button
             onClick={exportBackup}
-            className={`w-full sm:w-auto px-6 py-3 border rounded-full text-xs font-bold transition-all shadow-sm ${
-              isDarkMode ? 'bg-white/10 border-white/10 text-white hover:bg-white/20' : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-            }`}
+            className="w-full sm:w-auto px-6 py-2.5 bg-discord-deep hover:bg-discord-hover text-white border border-white/5 rounded-xl text-xs font-bold transition-all"
           >
             Exportar JSON
           </button>

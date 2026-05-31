@@ -36,23 +36,12 @@ export default function App() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark' || 
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    }
-    return false;
-  });
+  const isDarkMode = true;
 
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -130,25 +119,25 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-discord-deep flex items-center justify-center p-4">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-md w-full bg-white rounded-[40px] p-12 text-center shadow-2xl"
+          initial={{ opacity: 0, scale: 0.96, y: 15 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          className="max-w-md w-full bg-discord-sidebar border border-white/5 rounded-[32px] p-10 text-center shadow-2xl shadow-black/80"
         >
-          <div className="w-20 h-20 bg-[#1a1a1a] rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl rotate-3">
-            <Wallet className="w-10 h-10 text-white" />
+          <div className="w-16 h-16 bg-discord-blurple rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl rotate-3">
+            <Wallet className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-serif font-bold text-[#1a1a1a] mb-4">Finanças Pro</h1>
-          <p className="text-gray-500 mb-10 leading-relaxed">
-            Gestão financeira profissional com rigor contábil e interface moderna.
+          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Finanças Pro</h1>
+          <p className="text-discord-text-muted text-sm mb-8 leading-relaxed">
+            Gestão financeira profissional com rigor contábil e interface inspirada na Web3.
           </p>
           <button
             onClick={handleLogin}
-            className="w-full py-4 bg-[#1a1a1a] text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-black transition-all shadow-lg hover:shadow-xl active:scale-95"
+            className="w-full py-3.5 bg-discord-blurple hover:bg-discord-blurple/95 text-white rounded-xl font-bold flex items-center justify-center gap-3 transition-all shadow-lg active:scale-95 text-sm"
           >
-            <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
-            Acessar com Google
+            <img src="https://www.google.com/favicon.ico" className="w-5 h-5 bg-white p-0.5 rounded-full" alt="Google" />
+            Entrar com o Google
           </button>
         </motion.div>
       </div>
@@ -163,14 +152,14 @@ export default function App() {
   ];
 
   return (
-    <div className={`min-h-screen flex transition-colors duration-300 ${isDarkMode ? 'bg-slate-950 text-slate-100' : 'bg-[#F3F4F6] text-gray-900'}`}>
+    <div className="min-h-screen flex bg-discord-main text-discord-text-normal">
       {/* Desktop Sidebar */}
-      <aside className={`hidden lg:flex flex-col transition-all duration-300 ${isDarkMode ? 'bg-slate-900 border-r border-white/5' : 'bg-[#1a1a1a]'} text-white ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
+      <aside className={`hidden lg:flex flex-col transition-all duration-300 bg-discord-sidebar border-r border-white/5 text-discord-text-normal ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
         <div className="p-6 flex items-center gap-4">
-          <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0">
-            <Wallet className="w-6 h-6 text-[#1a1a1a]" />
+          <div className="w-10 h-10 bg-discord-blurple rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-discord-blurple/25">
+            <Wallet className="w-5 h-5 text-white" />
           </div>
-          {isSidebarOpen && <span className="font-serif font-bold text-xl tracking-tight">Finanças Pro</span>}
+          {isSidebarOpen && <span className="font-bold text-lg tracking-tight text-white uppercase font-mono">Finanças Pro</span>}
         </div>
 
         <nav className="flex-1 px-4 space-y-2 mt-8">
@@ -180,8 +169,8 @@ export default function App() {
               onClick={() => setActiveTab(item.id as any)}
               className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${
                 activeTab === item.id 
-                  ? 'bg-white/10 text-white' 
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-discord-blurple text-white font-bold' 
+                  : 'text-discord-text-muted hover:text-white hover:bg-discord-hover'
               }`}
             >
               <item.icon className="w-5 h-5" />
@@ -204,54 +193,47 @@ export default function App() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className={`border-b h-16 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30 transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-200'}`}>
+        <header className="border-b border-white/5 h-16 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30 bg-discord-sidebar text-discord-text-normal">
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className={`hidden lg:flex p-2 rounded-lg transition-colors ${isDarkMode ? 'hover:bg-white/5 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}
+              className="hidden lg:flex p-2 rounded-lg transition-colors hover:bg-discord-hover text-discord-text-muted hover:text-white"
             >
               {isSidebarOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
             <div className="lg:hidden flex items-center gap-2">
-              <Wallet className={`w-6 h-6 ${isDarkMode ? 'text-white' : 'text-[#1a1a1a]'}`} />
-              <span className="font-serif font-bold text-lg">Finanças Pro</span>
+              <Wallet className="w-6 h-6 text-discord-blurple" />
+              <span className="font-serif font-bold text-lg text-white">Finanças Pro</span>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-4">
-              <span className="hover:text-gray-600 cursor-pointer">Home</span>
-              <span className="text-gray-300">/</span>
-              <span className={`${isDarkMode ? 'text-white' : 'text-[#1a1a1a]'}`}>{navItems.find(i => i.id === activeTab)?.label}</span>
+            <div className="hidden sm:flex items-center gap-2 text-[10px] font-bold text-discord-text-muted uppercase tracking-widest ml-4">
+              <span className="hover:text-white cursor-pointer">Home</span>
+              <span className="text-white/10">/</span>
+              <span className="text-white">{navItems.find(i => i.id === activeTab)?.label}</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <button 
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-white/5 text-yellow-400' : 'hover:bg-gray-100 text-gray-500'}`}
-              title={isDarkMode ? 'Ativar Modo Claro' : 'Ativar Modo Escuro'}
-            >
-              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
-            <button className={`p-2 rounded-full relative transition-colors ${isDarkMode ? 'hover:bg-white/5 text-gray-400' : 'hover:bg-gray-100 text-gray-500'}`}>
+            <button className="p-2 rounded-full relative transition-colors hover:bg-discord-hover text-discord-text-muted hover:text-white">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-[#111]" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-discord-sidebar" />
             </button>
-            <div className={`h-8 w-px mx-1 ${isDarkMode ? 'bg-white/10' : 'bg-gray-200'}`} />
+            <div className="h-8 w-px bg-white/10 mx-1" />
             <div className="flex items-center gap-3 pl-2">
               <div className="hidden sm:flex flex-col items-end">
-                <span className={`text-xs font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{user.displayName}</span>
-                <span className="text-[10px] text-gray-400 uppercase font-bold">Administrador</span>
+                <span className="text-xs font-bold text-white">{user.displayName}</span>
+                <span className="text-[10px] text-discord-text-muted uppercase font-bold">Administrador</span>
               </div>
               <img 
                 src={user.photoURL || ''} 
                 alt={user.displayName || ''} 
-                className={`w-8 h-8 rounded-full border shadow-sm ${isDarkMode ? 'border-white/10' : 'border-gray-200'}`}
+                className="w-8 h-8 rounded-full border border-white/10 shadow-sm"
               />
             </div>
           </div>
         </header>
 
         {/* Content View */}
-        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-y-auto">
+        <main className="flex-1 p-4 lg:p-8 pb-24 lg:pb-8 overflow-y-auto bg-discord-main">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
@@ -271,10 +253,12 @@ export default function App() {
             )}
             {activeTab === 'reports' && <ReportGenerator transactions={transactions} />}
             {activeTab === 'settings' && (
-              <div className={`rounded-[32px] p-12 text-center border shadow-sm transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-100'}`}>
-                <Settings className={`w-12 h-12 mx-auto mb-4 ${isDarkMode ? 'text-slate-600' : 'text-gray-300'}`} />
-                <h2 className={`text-xl font-bold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Configurações do Sistema</h2>
-                <p className="text-gray-500">Módulo em desenvolvimento. Em breve você poderá gerenciar categorias e preferências.</p>
+              <div className="rounded-[24px] p-12 text-center border border-white/5 bg-discord-card shadow-2xl">
+                <Settings className="w-12 h-12 mx-auto mb-4 text-discord-text-muted" />
+                <h2 className="text-xl font-bold mb-2 text-white">Configurações do Sistema</h2>
+                <p className="text-discord-text-normal text-sm max-w-md mx-auto leading-relaxed">
+                  Módulo em desenvolvimento. Em breve você poderá gerenciar categorias, importar dados e personalizar as regras do sistema.
+                </p>
               </div>
             )}
           </motion.div>
@@ -286,19 +270,19 @@ export default function App() {
             setEditingTransaction(null);
             setIsFormOpen(true);
           }}
-          className="hidden lg:flex fixed bottom-8 right-8 w-14 h-14 bg-[#1a1a1a] text-white rounded-full items-center justify-center shadow-2xl hover:scale-110 transition-all active:scale-95 z-40"
+          className="hidden lg:flex fixed bottom-8 right-8 w-14 h-14 bg-discord-blurple text-white rounded-full items-center justify-center shadow-2xl shadow-discord-blurple/30 hover:scale-110 transition-all active:scale-95 z-40"
         >
           <Plus className="w-7 h-7" />
         </button>
 
         {/* Mobile Bottom Navigation */}
-        <nav className={`lg:hidden fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex items-center justify-between z-40 transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-200'}`}>
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 border-t border-white/5 px-6 py-3 flex items-center justify-between z-40 bg-discord-sidebar text-discord-text-normal">
           {navItems.filter(i => i.id !== 'settings').map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
               className={`flex flex-col items-center gap-1 transition-all ${
-                activeTab === item.id ? (isDarkMode ? 'text-white' : 'text-[#1a1a1a]') : 'text-slate-400'
+                activeTab === item.id ? 'text-white' : 'text-discord-text-muted'
               }`}
             >
               <item.icon className="w-5 h-5" />
@@ -310,16 +294,16 @@ export default function App() {
               setEditingTransaction(null);
               setIsFormOpen(true);
             }}
-            className={`w-12 h-12 text-white rounded-2xl flex items-center justify-center shadow-lg -mt-8 border-4 transition-all ${isDarkMode ? 'bg-white text-black border-slate-950' : 'bg-[#1a1a1a] border-[#F3F4F6]'}`}
+            className="w-12 h-12 text-white rounded-2xl flex items-center justify-center shadow-lg -mt-8 border-4 bg-discord-blurple border-discord-deep hover:scale-105 transition-all"
           >
             <Plus className="w-6 h-6" />
           </button>
           <button
             onClick={handleLogout}
-            className="flex flex-col items-center gap-1 text-gray-400"
+            className="flex flex-col items-center gap-1 text-discord-text-muted"
           >
             <LogOut className="w-6 h-6" />
-            <span className="text-[10px] font-bold uppercase">Sair</span>
+            <span className="text-[10px] font-bold uppercase text-rose-400">Sair</span>
           </button>
         </nav>
       </div>

@@ -136,114 +136,114 @@ export default function Dashboard({ transactions, categories }: DashboardProps) 
       {/* Header Info */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className={`text-2xl font-serif font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Visão Geral do Patrimônio</h2>
-          <p className="text-sm text-gray-500 flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            Período Contábil: {format(currentMonth, 'MMMM yyyy', { locale: ptBR })}
+          <h2 className="text-2xl font-bold tracking-tight text-white">Visão Geral do Patrimônio</h2>
+          <p className="text-sm text-discord-text-muted flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-discord-blurple" />
+            Período Contábil: <span className="text-white capitalize">{format(currentMonth, 'MMMM yyyy', { locale: ptBR })}</span>
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className={`px-4 py-2 border rounded-lg shadow-sm flex items-center gap-3 transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
+          <div className="px-4 py-2 border border-white/5 bg-discord-sidebar rounded-xl flex items-center gap-3">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">Sistema Operacional</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-discord-text-muted">Sistema Operacional</span>
           </div>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className={`border rounded-lg overflow-hidden flex flex-col shadow-sm transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
-          <div className="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5">
+        <div className="border border-white/5 bg-discord-card rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-black/20">
+          <div className="p-5 flex items-start justify-between border-b border-white/5">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Receita Líquida</p>
-              <h3 className={`text-2xl font-mono font-bold tracking-tighter ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <p className="text-[10px] font-bold text-discord-text-muted uppercase tracking-widest mb-1.5">Receita Líquida</p>
+              <h3 className="text-2xl font-mono font-bold tracking-tight text-white">
                 {currencyFormatter.format(stats.income)}
               </h3>
             </div>
-            <div className="p-2 rounded-lg bg-emerald-500 bg-opacity-10">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+            <div className="p-2.5 rounded-xl bg-emerald-500 bg-opacity-10">
+              <TrendingUp className="w-5 h-5 text-emerald-400" />
             </div>
           </div>
-          <div className={`px-4 py-2 flex items-center justify-between transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-gray-50'}`}>
-            <span className="text-[9px] font-bold text-gray-500 uppercase">Entradas Efetivadas</span>
-            <div className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-600">
+          <div className="px-5 py-3.5 flex items-center justify-between bg-black/15">
+            <span className="text-[9px] font-bold text-discord-text-muted uppercase">Entradas Efetivadas</span>
+            <div className="flex items-center gap-0.5 text-[10px] font-bold text-emerald-400">
               <ArrowUpRight className="w-3 h-3" />
               12%
             </div>
           </div>
         </div>
 
-        <div className={`border rounded-lg overflow-hidden flex flex-col shadow-sm transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
-          <div className="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5">
+        <div className="border border-white/5 bg-discord-card rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-black/20">
+          <div className="p-5 flex items-start justify-between border-b border-white/5">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Despesa Líquida</p>
-              <h3 className={`text-2xl font-mono font-bold tracking-tighter ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <p className="text-[10px] font-bold text-discord-text-muted uppercase tracking-widest mb-1.5">Despesa Líquida</p>
+              <h3 className="text-2xl font-mono font-bold tracking-tight text-white">
                 {currencyFormatter.format(stats.expense)}
               </h3>
             </div>
-            <div className="p-2 rounded-lg bg-rose-500 bg-opacity-10">
-              <TrendingDown className="w-5 h-5 text-rose-600" />
+            <div className="p-2.5 rounded-xl bg-rose-500 bg-opacity-10">
+              <TrendingDown className="w-5 h-5 text-rose-400" />
             </div>
           </div>
-          <div className={`px-4 py-2 flex items-center justify-between transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-gray-50'}`}>
-            <span className="text-[9px] font-bold text-gray-500 uppercase">Saídas Efetivadas</span>
-            <div className="flex items-center gap-0.5 text-[10px] font-bold text-rose-600">
+          <div className="px-5 py-3.5 flex items-center justify-between bg-black/15">
+            <span className="text-[9px] font-bold text-discord-text-muted uppercase">Saídas Efetivadas</span>
+            <div className="flex items-center gap-0.5 text-[10px] font-bold text-rose-400">
               <ArrowDownRight className="w-3 h-3" />
               5%
             </div>
           </div>
         </div>
 
-        <div className={`border rounded-lg overflow-hidden flex flex-col shadow-sm transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
-          <div className="p-4 flex items-start justify-between border-b border-gray-100 dark:border-white/5">
+        <div className="border border-white/5 bg-discord-card rounded-2xl overflow-hidden flex flex-col shadow-lg shadow-black/20">
+          <div className="p-5 flex items-start justify-between border-b border-white/5">
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Provisão de Débitos</p>
-              <h3 className={`text-2xl font-mono font-bold tracking-tighter ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              <p className="text-[10px] font-bold text-discord-text-muted uppercase tracking-widest mb-1.5">Provisão de Débitos</p>
+              <h3 className="text-2xl font-mono font-bold tracking-tight text-white">
                 {currencyFormatter.format(stats.pendingTotal)}
               </h3>
             </div>
-            <div className="p-2 rounded-lg bg-amber-500 bg-opacity-10">
-              <Clock className="w-5 h-5 text-amber-600" />
+            <div className="p-2.5 rounded-xl bg-amber-500 bg-opacity-10">
+              <Clock className="w-5 h-5 text-amber-400" />
             </div>
           </div>
-          <div className={`px-4 py-2 flex items-center justify-between transition-colors ${isDarkMode ? 'bg-white/5' : 'bg-gray-50'}`}>
-            <span className="text-[9px] font-bold text-gray-500 uppercase">Pagamentos Pendentes</span>
+          <div className="px-5 py-3.5 flex items-center justify-between bg-black/15">
+            <span className="text-[9px] font-bold text-discord-text-muted uppercase">Pagamentos Pendentes</span>
           </div>
         </div>
 
-        <div className={`border rounded-lg overflow-hidden flex flex-col shadow-lg transition-colors ${isDarkMode ? 'bg-white border-white' : 'bg-[#1a1a1a] border-[#1a1a1a]'}`}>
-          <div className={`p-4 flex items-start justify-between border-b ${isDarkMode ? 'border-black/10' : 'border-white/10'}`}>
+        <div className="border border-discord-blurple/30 bg-discord-blurple rounded-2xl overflow-hidden flex flex-col shadow-xl shadow-discord-blurple/15">
+          <div className="p-5 flex items-start justify-between border-b border-white/10 text-white">
             <div>
-              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isDarkMode ? 'text-black/40' : 'text-white/40'}`}>Saldo em Conta</p>
-              <h3 className={`text-2xl font-mono font-bold tracking-tighter ${isDarkMode ? 'text-black' : 'text-white'}`}>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5 text-white/70">Saldo em Conta</p>
+              <h3 className="text-2xl font-mono font-bold tracking-tight text-white">
                 {currencyFormatter.format(stats.balance)}
               </h3>
             </div>
-            <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-black/10' : 'bg-white/10'}`}>
-              <DollarSign className={`w-5 h-5 ${isDarkMode ? 'text-black' : 'text-white'}`} />
+            <div className="p-2.5 rounded-xl bg-white/15">
+              <DollarSign className="w-5 h-5 text-white" />
             </div>
           </div>
-          <div className={`px-4 py-2 flex items-center justify-between ${isDarkMode ? 'bg-black/5' : 'bg-white/5'}`}>
-            <span className={`text-[9px] font-bold uppercase ${isDarkMode ? 'text-black/40' : 'text-white/40'}`}>Disponibilidade Real</span>
+          <div className="px-5 py-3.5 flex items-center justify-between bg-black/15">
+            <span className="text-[9px] font-bold uppercase text-white/70">Disponibilidade Real</span>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Trend Chart */}
-        <div className={`border rounded-lg shadow-sm overflow-hidden flex flex-col lg:col-span-2 transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
-          <div className={`p-4 border-b flex items-center justify-between transition-colors ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-300'}`}>
+        <div className="border border-white/5 bg-discord-card rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col lg:col-span-2">
+          <div className="p-4 border-b border-white/5 flex items-center justify-between bg-discord-sidebar/40">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-gray-400" />
-              <h3 className="text-xs font-bold uppercase tracking-widest text-gray-600">Fluxo de Caixa Semestral</h3>
+              <BarChart3 className="w-4 h-4 text-discord-text-muted" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-discord-text-normal">Fluxo de Caixa Semestral</h3>
             </div>
-            <div className="flex items-center gap-4 text-[9px] font-bold uppercase text-gray-400">
+            <div className="flex items-center gap-4 text-[9px] font-bold uppercase text-discord-text-muted">
               <div className="flex items-center gap-1.5">
-                <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-white' : 'bg-[#1a1a1a]'}`} />
+                <div className="w-2 h-2 rounded-full bg-discord-blurple" />
                 Receitas
               </div>
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600" />
+                <div className="w-2 h-2 rounded-full bg-slate-500" />
                 Despesas
               </div>
             </div>
@@ -251,49 +251,49 @@ export default function Dashboard({ transactions, categories }: DashboardProps) 
           <div className="p-6 h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDarkMode ? "#333" : "#E5E7EB"} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#2b2d31" />
                 <XAxis 
                   dataKey="name" 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fontWeight: 700, fill: '#949ba4' }}
                   dy={10}
                 />
                 <YAxis 
                   axisLine={false} 
                   tickLine={false} 
-                  tick={{ fontSize: 10, fontWeight: 700, fill: '#9CA3AF' }}
+                  tick={{ fontSize: 10, fontWeight: 700, fill: '#949ba4' }}
                   tickFormatter={(value) => `R$ ${value}`}
                 />
                 <Tooltip 
-                  cursor={{ fill: isDarkMode ? 'rgba(255,255,255,0.05)' : '#F3F4F6' }}
+                  cursor={{ fill: 'rgba(255,255,255,0.04)' }}
                   contentStyle={{ 
-                    backgroundColor: isDarkMode ? '#1a1a1a' : '#fff',
-                    borderRadius: '8px', 
-                    border: isDarkMode ? '1px solid rgba(255,255,255,0.1)' : '1px solid #E5E7EB',
-                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                    backgroundColor: '#1e1f22',
+                    borderRadius: '12px', 
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.7)',
                     fontSize: '12px',
                     fontWeight: 'bold',
-                    color: isDarkMode ? '#fff' : '#000'
+                    color: '#dbdee1'
                   }}
                 />
-                <Bar dataKey="receita" fill={isDarkMode ? "#fff" : "#1a1a1a"} radius={[4, 4, 0, 0]} barSize={32} />
-                <Bar dataKey="despesa" fill={isDarkMode ? "#444" : "#D1D5DB"} radius={[4, 4, 0, 0]} barSize={32} />
+                <Bar dataKey="receita" fill="#5865f2" radius={[4, 4, 0, 0]} barSize={28} />
+                <Bar dataKey="despesa" fill="#44464d" radius={[4, 4, 0, 0]} barSize={28} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
         {/* Recent Activity / Alerts */}
-        <div className={`border rounded-lg shadow-sm overflow-hidden flex flex-col transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-300'}`}>
-          <div className={`p-4 border-b flex items-center gap-2 transition-colors ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-300'}`}>
-            <AlertCircle className="w-4 h-4 text-gray-400" />
-            <h3 className="text-xs font-bold uppercase tracking-widest text-gray-600">Alertas e Deduções</h3>
+        <div className="border border-white/5 bg-discord-card rounded-2xl shadow-lg shadow-black/20 overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-white/5 flex items-center gap-2 bg-discord-sidebar/40">
+            <AlertCircle className="w-4 h-4 text-discord-text-muted" />
+            <h3 className="text-xs font-bold uppercase tracking-widest text-discord-text-normal">Alertas e Deduções</h3>
           </div>
           <div className="p-6 flex-1 space-y-6">
-            <div className={`p-4 border rounded-xl transition-colors ${isDarkMode ? 'bg-rose-500/10 border-rose-500/20' : 'bg-rose-50 border-rose-100'}`}>
+            <div className="p-4 border border-rose-500/10 bg-rose-500/5 rounded-xl">
               <p className="text-[10px] font-bold text-rose-400 uppercase mb-1">Total de Deduções (Mês)</p>
-              <h4 className="text-2xl font-mono font-bold text-rose-600 tracking-tighter">
+              <h4 className="text-2xl font-mono font-bold text-rose-400 tracking-tight">
                 {currencyFormatter.format(stats.deductions)}
               </h4>
               <p className="text-[10px] text-rose-500 mt-2 font-medium">
@@ -302,19 +302,19 @@ export default function Dashboard({ transactions, categories }: DashboardProps) 
             </div>
 
             <div className="space-y-4">
-              <h5 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Resumo de Liquidez</h5>
+              <h5 className="text-[10px] font-bold text-discord-text-muted uppercase tracking-widest">Resumo de Liquidez</h5>
               <div className="space-y-3">
                 {[
                   { label: 'Margem de Lucro', value: stats.income > 0 ? ((stats.balance / stats.income) * 100).toFixed(1) + '%' : '0%', color: 'bg-emerald-500' },
                   { label: 'Comprometimento', value: stats.income > 0 ? ((stats.expense / stats.income) * 100).toFixed(1) + '%' : '0%', color: 'bg-rose-500' },
                   { label: 'Provisão Futura', value: stats.pendingTotal > 0 ? currencyFormatter.format(stats.pendingTotal) : 'R$ 0,00', color: 'bg-amber-500' },
                 ].map((item, i) => (
-                  <div key={i} className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${isDarkMode ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100'}`}>
+                  <div key={i} className="flex items-center justify-between p-3.5 rounded-xl border border-white/5 bg-discord-sidebar hover:bg-discord-hover transition-colors">
                     <div className="flex items-center gap-2">
                       <div className={`w-1.5 h-1.5 rounded-full ${item.color}`} />
-                      <span className="text-[10px] font-bold text-gray-600 uppercase">{item.label}</span>
+                      <span className="text-[10px] font-bold text-discord-text-muted uppercase">{item.label}</span>
                     </div>
-                    <span className={`text-[11px] font-mono font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{item.value}</span>
+                    <span className="text-[11px] font-mono font-bold text-white">{item.value}</span>
                   </div>
                 ))}
               </div>

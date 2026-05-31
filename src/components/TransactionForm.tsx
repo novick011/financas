@@ -14,8 +14,12 @@ interface TransactionFormProps {
   user: User;
 }
 
-const DEFAULT_CATEGORIES = [
-  'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Moradia', 'Salário', 'Investimentos', 'Outros'
+const INCOME_CATEGORIES = [
+  'Salário', 'Investimentos', 'Vendas', 'Prestação de Serviços', 'Empréstimo Tomado', 'Outros'
+];
+
+const EXPENSE_CATEGORIES = [
+  'Alimentação', 'Transporte', 'Lazer', 'Saúde', 'Educação', 'Moradia', 'Empréstimo Concedido', 'Outros'
 ];
 
 type FormTab = 'geral' | 'pagamento' | 'detalhes';
@@ -25,15 +29,32 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
   const [amount, setAmount] = useState<string>(editingTransaction?.amount.toString() || '');
   const [type, setType] = useState<TransactionType>(editingTransaction?.type || 'expense');
   const [category, setCategory] = useState<string>(editingTransaction?.category || 'Outros');
-  const [date, setDate] = useState<string>(
-    editingTransaction ? editingTransaction.date.toDate().toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
-  );
+  const [date, setDate] = useState<string>(() => {
+    const d = editingTransaction ? editingTransaction.date.toDate() : new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  });
   const [description, setDescription] = useState<string>(editingTransaction?.description || '');
   const [adjustments, setAdjustments] = useState<Adjustment[]>(editingTransaction?.adjustments || []);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(editingTransaction?.paymentMethod || 'cash_paid');
   const [installmentsCount, setInstallmentsCount] = useState<number>(editingTransaction?.installmentsCount || 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isDarkMode = document.documentElement.classList.contains('dark');
+
+  const [isLoan, setIsLoan] = useState<boolean>(() => {
+    if (editingTransaction?.isLoan !== undefined) return editingTransaction.isLoan;
+    return editingTransaction?.category === 'Empréstimo' ||
+           editingTransaction?.category === 'Empréstimo Tomado' ||
+           editingTransaction?.category === 'Empréstimo Concedido';
+  });
+  const [loanType, setLoanType] = useState<'borrowed' | 'lent'>(() => {
+    if (editingTransaction?.loanType) return editingTransaction.loanType;
+    if (editingTransaction?.type === 'income') return 'borrowed';
+    return 'lent';
+  });
+  const [loanPartner, setLoanPartner] = useState<string>(editingTransaction?.loanPartner || '');
 
   const addAdjustment = (type: 'discount' | 'addition') => {
     const newAdjustment: Adjustment = {
@@ -78,7 +99,8 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
     if (!amount || !category || !date) return;
 
     setIsSubmitting(true);
-    const baseDate = new Date(date);
+    const [year, month, day] = date.split('-').map(Number);
+    const baseDate = new Date(year, month - 1, day);
     const parsedAmount = parseFloat(amount);
 
     try {
@@ -93,8 +115,10 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
           date: Timestamp.fromDate(baseDate),
           description,
           paymentMethod,
-          status: paymentMethod === 'cash_paid' ? 'paid' : 'pending',
-          createdAt: editingTransaction.createdAt || Timestamp.now()
+          status: paymentMethod === 'cash_paid' ? 'paid' : (editingTransaction.status || 'pending'),
+          createdAt: editingTransaction.createdAt || Timestamp.now(),
+          isLoan,
+          ...(isLoan ? { loanType, loanPartner } : { loanType: null, loanPartner: null })
         };
         await updateDoc(doc(db, 'transactions', editingTransaction.id), transactionData);
       } else {
@@ -127,7 +151,9 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
               installmentsCount,
               installmentNumber: i + 1,
               status: i === 0 ? 'paid' : 'pending',
-              createdAt: Timestamp.now()
+              createdAt: Timestamp.now(),
+              isLoan,
+              ...(isLoan ? { loanType, loanPartner } : {})
             });
           }
           await batch.commit();
@@ -143,7 +169,9 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
             description,
             paymentMethod,
             status: paymentMethod === 'cash_paid' ? 'paid' : 'pending',
-            createdAt: Timestamp.now()
+            createdAt: Timestamp.now(),
+            isLoan,
+            ...(isLoan ? { loanType, loanPartner } : {})
           };
           await addDoc(collection(db, 'transactions'), transactionData);
         }
@@ -220,42 +248,147 @@ export default function TransactionForm({ onClose, editingTransaction, categorie
                     <div className="w-1 h-4 bg-[#1a1a1a] dark:bg-white" />
                     <h4 className="text-[10px] font-bold uppercase text-gray-500">Identificação do Lançamento</h4>
                   </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-gray-400">Tipo de Operação</label>
-                      <select
-                        value={type}
-                        onChange={(e) => setType(e.target.value as TransactionType)}
-                        className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
-                      >
-                        <option value="expense">Saída (Despesa)</option>
-                        <option value="income">Entrada (Receita)</option>
-                      </select>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-gray-400">Data de Emissão</label>
-                      <input
-                        type="date"
-                        required
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-mono focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold uppercase text-gray-400">Categoria Contábil</label>
-                      <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                        className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
-                      >
-                        {DEFAULT_CATEGORIES.map(cat => (
-                          <option key={cat} value={cat}>{cat}</option>
-                        ))}
-                      </select>
-                    </div>
+
+                  {/* Seletor de Tipo de Registro: Padrão vs Empréstimo */}
+                  <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-black rounded border border-gray-200 dark:border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLoan(false);
+                        // Reset category to a standard one
+                        setCategory(type === 'income' ? 'Salário' : 'Outros');
+                      }}
+                      className={`py-2 text-[10px] font-bold uppercase tracking-wider rounded transition-all ${
+                        !isLoan 
+                          ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' 
+                          : 'text-gray-400 hover:text-gray-650 dark:hover:text-gray-300'
+                      }`}
+                    >
+                      Lançamento Padrão
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsLoan(true);
+                        // Default values for loan
+                        setType(loanType === 'borrowed' ? 'income' : 'expense');
+                        setCategory(loanType === 'borrowed' ? 'Empréstimo Tomado' : 'Empréstimo Concedido');
+                      }}
+                      className={`py-2 text-[10px] font-bold uppercase tracking-wider rounded transition-all ${
+                        isLoan 
+                          ? 'bg-white dark:bg-slate-900 shadow text-gray-900 dark:text-white' 
+                          : 'text-gray-400 hover:text-gray-650 dark:hover:text-gray-300'
+                      }`}
+                    >
+                      Controle de Empréstimo
+                    </button>
                   </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold uppercase text-gray-400">
+                      {isLoan ? 'Descrição do Empréstimo' : 'Descrição do Lançamento'}
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder={isLoan ? "Ex: Empréstimo pessoal para capital de giro, Empréstimo Amigo João..." : "Ex: Aluguel, Compra de materiais, Venda de serviços..."}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                    />
+                  </div>
+
+                  {!isLoan ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-gray-400">Tipo de Operação</label>
+                        <select
+                          value={type}
+                          onChange={(e) => {
+                            const newType = e.target.value as TransactionType;
+                            setType(newType);
+                            setCategory(newType === 'income' ? 'Salário' : 'Outros');
+                          }}
+                          className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                        >
+                          <option value="expense">Saída (Despesa)</option>
+                          <option value="income">Entrada (Receita)</option>
+                        </select>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-gray-400">Data de Emissão</label>
+                        <input
+                          type="date"
+                          required
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-mono focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-bold uppercase text-gray-400">Categoria Contábil</label>
+                        <select
+                          value={category}
+                          onChange={(e) => setCategory(e.target.value)}
+                          className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                        >
+                          {((type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES).includes(category)
+                            ? (type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)
+                            : [category, ...(type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES)]
+                          ).map(cat => (
+                            <option key={cat} value={cat}>{cat}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase text-gray-400">Tipo de Empréstimo</label>
+                          <select
+                            value={loanType}
+                            onChange={(e) => {
+                              const newLoanType = e.target.value as 'borrowed' | 'lent';
+                              setLoanType(newLoanType);
+                              setType(newLoanType === 'borrowed' ? 'income' : 'expense');
+                              setCategory(newLoanType === 'borrowed' ? 'Empréstimo Tomado' : 'Empréstimo Concedido');
+                            }}
+                            className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                          >
+                            <option value="borrowed">Tomado (Recebi - Entrada)</option>
+                            <option value="lent">Concedido (Emprestei - Saída)</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase text-gray-400">Data do Lançamento</label>
+                          <input
+                            type="date"
+                            required
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-mono focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold uppercase text-gray-400">
+                            {loanType === 'borrowed' ? 'Credor (Quem te emprestou)' : 'Devedor (Quem recebeu)'}
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            placeholder={loanType === 'borrowed' ? "Ex: Banco, João, Financiadora" : "Ex: Maria, Primo Carlos, Amigo Geraldo"}
+                            value={loanPartner}
+                            onChange={(e) => setLoanPartner(e.target.value)}
+                            className="w-full px-3 py-2 bg-gray-50 dark:bg-black border border-gray-200 dark:border-white/10 rounded text-xs font-bold focus:ring-1 focus:ring-[#1a1a1a] dark:focus:ring-white outline-none text-gray-900 dark:text-white"
+                          />
+                        </div>
+                      </div>
+                      <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded border border-blue-100 dark:border-blue-900/30 text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider">
+                        Categoria contábil definida automaticamente para &ldquo;{category === 'Empréstimo Tomado' ? 'Empréstimo Tomado (Recebido)' : 'Empréstimo Concedido (Cedido)'}&rdquo; ({type === 'income' ? 'Entrada / Receita' : 'Saída / Despesa'}).
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Section: Valores */}

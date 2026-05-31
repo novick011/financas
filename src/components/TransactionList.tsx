@@ -3,7 +3,7 @@ import { Transaction } from '../types';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { ArrowUpCircle, ArrowDownCircle, Edit2, Trash2, Search, CheckCircle2, Clock, CreditCard, Filter, ChevronRight, ChevronLeft } from 'lucide-react';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { doc, deleteDoc, updateDoc, Timestamp } from 'firebase/firestore';
 import { db, OperationType, handleFirestoreError } from '../firebase';
 
 interface TransactionListProps {
@@ -35,9 +35,20 @@ export default function TransactionList({ transactions, onEdit }: TransactionLis
 
   const toggleStatus = async (t: Transaction) => {
     try {
-      await updateDoc(doc(db, 'transactions', t.id), {
-        status: t.status === 'paid' ? 'pending' : 'paid'
-      });
+      const isPending = t.status === 'pending';
+      const updates: any = {
+        status: isPending ? 'paid' : 'pending'
+      };
+
+      if (t.paymentMethod === 'cash_pending' && isPending) {
+        updates.paymentMethod = 'cash_paid';
+        // Atualiza a data do lançamento para hoje, para que seja contabilizado como despesa real do mês corrente
+        updates.date = Timestamp.now();
+      } else if (t.paymentMethod === 'cash_paid' && !isPending) {
+        updates.paymentMethod = 'cash_pending';
+      }
+
+      await updateDoc(doc(db, 'transactions', t.id), updates);
     } catch (error) {
       handleFirestoreError(error, OperationType.UPDATE, `transactions/${t.id}`);
     }
@@ -149,11 +160,23 @@ export default function TransactionList({ transactions, onEdit }: TransactionLis
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           ) : (
                             <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                          )}
+                          ) /* closing curly brace to pair */}
                           <span className={`text-[11px] font-medium uppercase tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
                             {t.description || 'Lançamento sem descrição'}
                           </span>
                         </div>
+                        {t.isLoan && (
+                          <div className="flex items-center gap-1.5 mt-1 ml-3.5">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase bg-amber-500/15 text-amber-500 border border-amber-500/20">
+                              Empréstimo {t.loanType === 'borrowed' ? 'Tomado' : 'Concedido'}
+                            </span>
+                            {t.loanPartner && (
+                              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-tight">
+                                {t.loanType === 'borrowed' ? 'Credor' : 'Devedor'}: {t.loanPartner}
+                              </span>
+                            )}
+                          </div>
+                        )}
                         {t.adjustments && t.adjustments.length > 0 ? (
                           <div className="flex flex-wrap gap-x-3 gap-y-0.5 mt-1 ml-3.5">
                             {t.adjustments.map((adj, idx) => (
@@ -174,13 +197,23 @@ export default function TransactionList({ transactions, onEdit }: TransactionLis
                       {t.category}
                     </span>
                   </td>
-                  <td className={`px-4 py-3 whitespace-nowrap text-[10px] font-bold text-gray-500 text-center border-r ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
-                    {t.paymentMethod === 'cash_paid' && 'À VISTA'}
-                    {t.paymentMethod === 'cash_pending' && 'A PRAZO'}
+                  <td className={`px-4 py-3 whitespace-nowrap text-[10px] font-bold text-center border-r ${isDarkMode ? 'border-white/5' : 'border-gray-100'}`}>
+                    {t.paymentMethod === 'cash_paid' && (
+                      <span className="text-emerald-600 dark:text-emerald-400">
+                        {t.type === 'expense' ? 'DÉBITO PAGO' : 'À VISTA'}
+                      </span>
+                    )}
+                    {t.paymentMethod === 'cash_pending' && (
+                      t.status === 'paid' ? (
+                        <span className="text-emerald-600 dark:text-emerald-400">DÍVIDA PAGA</span>
+                      ) : (
+                        <span className="text-amber-500 dark:text-amber-400">A PRAZO</span>
+                      )
+                    )}
                     {t.paymentMethod === 'installments' && (
-                      <span className="flex items-center justify-center gap-1">
+                      <span className={`inline-flex items-center gap-1 ${t.status === 'paid' ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-500 dark:text-amber-400'}`}>
                         <CreditCard className="w-3 h-3" />
-                        {t.installmentNumber}/{t.installmentsCount}
+                        {t.installmentNumber}/{t.installmentsCount} {t.status === 'paid' ? '(PAGO)' : '(PENDENTE)'}
                       </span>
                     )}
                   </td>

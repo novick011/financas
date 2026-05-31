@@ -25,6 +25,9 @@ export interface Transaction {
   installmentNumber?: number;
   status: 'paid' | 'pending';
   createdAt?: Timestamp;
+  isLoan?: boolean;
+  loanType?: 'borrowed' | 'lent';
+  loanPartner?: string;
 }
 
 export interface Category {

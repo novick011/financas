@@ -41,7 +41,10 @@
         "installmentsCount": { "type": "integer" },
         "installmentNumber": { "type": "integer" },
         "status": { "type": "string", "enum": ["paid", "pending"] },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "createdAt": { "type": "string", "format": "date-time" },
+        "isLoan": { "type": "boolean" },
+        "loanType": { "type": "string", "enum": ["borrowed", "lent"] },
+        "loanPartner": { "type": "string" }
       },
       "required": ["uid", "amount", "deduction", "type", "category", "date", "paymentMethod", "status"]
     },

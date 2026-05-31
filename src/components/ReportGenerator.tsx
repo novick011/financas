@@ -116,7 +116,7 @@ export default function ReportGenerator({ transactions }: ReportGeneratorProps) 
         format(t.date.toDate(), 'dd/MM/yyyy'),
         t.description || 'Sem descrição',
         t.category,
-        t.paymentMethod === 'cash_paid' ? 'À Vista' : t.paymentMethod === 'cash_pending' ? 'A Prazo' : `Parcela ${t.installmentNumber}/${t.installmentsCount}`,
+        t.paymentMethod === 'cash_paid' ? (t.type === 'expense' ? 'Débito Pago' : 'À Vista') : t.paymentMethod === 'cash_pending' ? (t.status === 'paid' ? 'Dívida Paga' : 'A Prazo') : `Parcela ${t.installmentNumber}/${t.installmentsCount}`,
         t.status === 'paid' ? 'Liquidado' : 'Pendente',
         getAdjustmentSummary(t),
         currencyFormatter.format(getNetAmount(t))

@@ -293,7 +293,7 @@ export default function App() {
 
         {/* Mobile Bottom Navigation */}
         <nav className={`lg:hidden fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex items-center justify-between z-40 transition-colors ${isDarkMode ? 'bg-slate-900 border-white/5' : 'bg-white border-gray-200'}`}>
-          {navItems.slice(0, 3).map((item) => (
+          {navItems.filter(i => i.id !== 'settings').map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as any)}
@@ -301,8 +301,8 @@ export default function App() {
                 activeTab === item.id ? (isDarkMode ? 'text-white' : 'text-[#1a1a1a]') : 'text-slate-400'
               }`}
             >
-              <item.icon className="w-6 h-6" />
-              <span className="text-[10px] font-bold uppercase">{item.label}</span>
+              <item.icon className="w-5 h-5" />
+              <span className="text-[9px] font-bold uppercase">{item.label}</span>
             </button>
           ))}
           <button
